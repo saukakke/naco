@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NACO | Normal Apprenticeship Company – Skills, Morals, Self-Reliance</title>
+    <title>NACO | Normal Apprenticeship Company – Skills, Discipline, Morals, Self-Reliance</title>
     <meta name="description" content="NACO empowers Nigerian youths with manpower skills, moral training, and emergency response for self-reliance and community development.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -406,6 +406,11 @@
             margin-top: 2rem;
             font-size: 0.8rem;
         }
+    
+    .rounded {
+        border-radius: 20px;
+        width: 100%;
+    }
 
         /* floating whatsapp */
         .whatsapp-float {
@@ -498,7 +503,8 @@
             </div>
         </div>
         <div class="hero-image">
-            <i class="fas fa-chalkboard-user"></i>
+            <!-- i class="fas fa-chalkboard-user"></i-->
+            <img src="images/badge.jpg" class="rounded" />
         </div>
     </div>
 </section>
@@ -529,7 +535,7 @@
         <div class="grid-3">
             <div class="card"><i class="fas fa-hands service-icon"></i><h3>Vocational Handcraft</h3><p>Tailoring, carpentry, welding, electronics, hairdressing – practical skills for economic independence.</p></div>
             <div class="card"><i class="fas fa-heartbeat service-icon"></i><h3>Moral & Character Dev.</h3><p>Ceremonial drills, discipline, and integrity training for responsible citizenship.</p></div>
-            <div class="card"><i class="fas fa-hand-holding-medical service-icon"></i><h3>Emergency First Aid</h3><p>First aid, CPR, basic life support, and disaster preparedness.</p></div>
+            <div class="card"><i class="fas fa-hand-holding-medical service-icon"></i><h3>Emergency First Aid</h3><p>First aid, Cardiopulmonary resuscitation, basic life support, and disaster preparedness.</p></div>
             <div class="card"><i class="fas fa-fire-extinguisher service-icon"></i><h3>Water & Fire Rescue</h3><p>Specialized training in drowning prevention, fire evacuation, and property salvage.</p></div>
             <div class="card"><i class="fas fa-people-arrows service-icon"></i><h3>Community Development</h3><p>Communal labour, self-help projects, infrastructure improvement.</p></div>
             <div class="card"><i class="fas fa-chalkboard service-icon"></i><h3>Entrepreneurship Mentorship</h3><p>Business planning, financial literacy, startup guidance for self-reliance.</p></div>
@@ -545,7 +551,7 @@
             <div class="card" style="background: #fef9e6;">
                 <h3><i class="fas fa-shield-alt" style="color: var(--accent); margin-right: 12px;"></i> Group 1: Life Saving & Emergency Response</h3>
                 <ul class="list-check" style="margin-top: 1rem;">
-                    <li><i class="fas fa-check-circle"></i> Medical First Aid Training – Certification in CPR, wound care, basic life support</li>
+                    <li><i class="fas fa-check-circle"></i> Medical First Aid Training – Certification in Cardiopulmonary resuscitation (CPR), wound care, basic life support</li>
                     <li><i class="fas fa-check-circle"></i> Water & Fire Disaster Rescue – Drowning prevention, fire evacuation, property salvage</li>
                     <li><i class="fas fa-check-circle"></i> Community First Responder Program – Trained local responders for emergencies</li>
                 </ul>
@@ -553,7 +559,7 @@
             <div class="card" style="background: #eef5ea;">
                 <h3><i class="fas fa-briefcase" style="color: var(--accent); margin-right: 12px;"></i> Group 2: Manpower & Vocational Skills</h3>
                 <ul class="list-check" style="margin-top: 1rem;">
-                    <li><i class="fas fa-check-circle"></i> Manpower Skills Acquisition – Tailoring, carpentry, welding, electronics, hairdressing</li>
+                    <li><i class="fas fa-check-circle"></i> Manpower Skills Acquisition – Tailoring, carpentry, welding, electronics, hairdressing, etc</li>
                     <li><i class="fas fa-check-circle"></i> Self-Reliance & Entrepreneurship – Business planning, financial literacy, startup mentorship</li>
                 </ul>
             </div>
@@ -609,7 +615,7 @@
             <div class="testimonial-card">
                 <i class="fas fa-quote-left" style="color: var(--accent); margin-bottom: 10px; display: inline-block;"></i>
                 <p>“NACO gave me tailoring and entrepreneurial skills. Today I run my own fashion outlet and train two apprentices. I’m independent!”</p>
-                <h4>— Fatima B., Kano</h4>
+                <h4>— Hussaini M., Kano</h4>
             </div>
             <div class="testimonial-card">
                 <i class="fas fa-quote-left" style="color: var(--accent); margin-bottom: 10px; display: inline-block;"></i>
@@ -635,16 +641,16 @@
         <div class="card" style="max-width: 700px; margin: 0 auto;">
             <form id="enrollForm">
                 <div class="form-group">
-                    <input type="text" id="fullname" placeholder="Full Name" required>
+                    <input type="text" id="fullname" placeholder="Full Name" name="fullname" required>
                 </div>
                 <div class="form-group">
-                    <input type="email" id="email" placeholder="Email Address" required>
+                    <input type="email" id="email" name="email" placeholder="Email Address" required>
                 </div>
                 <div class="form-group">
-                    <input type="tel" id="phone" placeholder="Phone Number" required>
+                    <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
                 </div>
                 <div class="form-group">
-                    <select id="trainingArea" required>
+                    <select id="trainingArea" name="skill" required>
                         <option value="">Preferred Training Area</option>
                         <option>Life Saving & Emergency Response</option>
                         <option>Manpower & Vocational Skills</option>
@@ -672,13 +678,13 @@
                 <h3>Send a Message</h3>
                 <form id="contactForm">
                     <div class="form-group">
-                        <input type="text" id="contactName" placeholder="Your Name" required>
+                        <input type="text" id="contactName"  name="name" placeholder="Your Name" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="contactEmail" placeholder="Email" required>
+                        <input type="email" name="email" id="contactEmail" placeholder="Email" required>
                     </div>
                     <div class="form-group">
-                        <textarea rows="3" id="contactMsg" placeholder="Your message..." required></textarea>
+                        <textarea rows="3" id="contactMsg" name="contactMsg" placeholder="Your message..." required></textarea>
                     </div>
                     <button type="submit" class="btn-submit">Send Message</button>
                     <p id="contactFeedback" style="margin-top: 0.8rem;"></p>
@@ -693,7 +699,7 @@
     <div class="cta-banner" style="background: var(--accent); color: var(--primary);">
         <h2>Empower a Youth Today</h2>
         <p>Sponsor a trainee or partner with NACO to expand skill development across Nigeria.</p>
-        <a href="#get-started" class="btn-primary" style="background: var(--primary); color: white;">Join the Movement</a>
+        <a href="#get-started" class="btn-primary" style="background: var(--primary); color: white; padding: 5px; border-radius: 10px; text-decoration: none;">Join the Movement</a>
     </div>
 </div>
 
