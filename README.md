@@ -6,7 +6,7 @@ A modern, high-converting, fully responsive website for **Normal Apprenticeship 
 
 ## 📌 Live Preview
 
-Open `index.html` in any modern browser to view the website locally.
+Open `about.html` in any modern browser to view the website locally.
 
 ---
 
