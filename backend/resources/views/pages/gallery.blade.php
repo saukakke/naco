@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title','Gallery | NACO') @section('content')<section class="container"><h1>Gallery</h1><p>NACO activities, training, teamwork and community service.</p></section>@endsection
