@@ -1,101 +1,86 @@
-# NACO – Normal Apprenticeship Company Website
+# NACO — Normal Apprenticeship Company
 
-A modern, high-converting, fully responsive website for **Normal Apprenticeship Company (NACO)** – a training organization that empowers Nigerian youths with manpower skills, moral training, and emergency response capabilities.
+A complete, responsive public website for **Normal Apprenticeship Company (NACO)**, built around its mission of empowering Nigerian youths with practical manpower skills, moral development, emergency response capabilities and community-development values.
 
----
+## Website
 
-## 📌 Live Preview
+The site is a lightweight static website suitable for GitHub Pages, Netlify, Vercel or shared hosting.
 
-Open `about.html` in any modern browser to view the website locally.
+### Pages
 
----
+- `index.html` — public home page and organization overview
+- `about.html` — mission, vision, identity and principles
+- `programs.html` — life-saving, vocational and community-development programs
+- `impact.html` — NACO's impact model and success stories
+- `contact.html` — enrolment, contact and partnership enquiries
 
-## 🧩 Features
+### Shared assets
 
-- **Fully Responsive** – Works perfectly on desktop, tablet, and mobile devices.
-- **High-Converting Layout** – Clear CTAs (Enroll Now, Learn More, Chat on WhatsApp), trust signals, testimonials, and enrollment form.
-- **Professional Design** – Warm color scheme: deep green (`#0a2e1f`) + gold/orange (`#f5a623`).
-- **Service Classification** – Three major service groups with icons and descriptions.
-- **Interactive Forms** – "Get Started" enrollment form + contact message form.
-- **Floating WhatsApp Button** – Instant chat for inquiries.
-- **Smooth Scrolling & Hover Effects** – Modern UX with card shadows and transitions.
-- **No External Dependencies** – Only Font Awesome icons (CDN) – easy to deploy.
+- `assets/styles.css` — responsive design system and components
+- `assets/script.js` — mobile navigation, form feedback and dynamic copyright year
+- `badge.jpg` — existing NACO badge supplied in the original repository
 
----
+## Content foundation
 
-## 📁 File Structure
-project/
-│
-├── index.html          # Complete website (HTML/CSS/JS)
-└── README.md           # Project documentation
+The redesign preserves the core information from the original NACO website:
 
-> No additional files, images, or folders required. All icons come from Font Awesome CDN.
+- NACO stands for **Normal Apprenticeship Company**.
+- The organization focuses on manpower/vocational skills, moral training, emergency response and self-reliance.
+- Key activities include tailoring, carpentry, welding, electronics, hairdressing, first aid, CPR, basic life support, water and fire rescue, ceremonial drills, communal labour and entrepreneurship mentorship.
+- The three main service groups are **Life Saving & Emergency Response**, **Manpower & Vocational Skills**, and **Moral & Community Development**.
+- The stated mission is to empower youths to become self-reliant, productive citizens who contribute to community and national development.
+- The stated vision is a skilled, disciplined and self-sufficient youth population.
 
----
+## Design direction
 
-## 🛠️ Technologies Used
+The new interface keeps NACO's established deep-green and gold identity while introducing a cleaner information hierarchy, reusable components, stronger typography, accessible focus states, responsive navigation and distinct page-level layouts.
 
-- HTML5
-- CSS3 (Flexbox, Grid, custom properties)
-- JavaScript (vanilla – form handling)
-- Font Awesome 6 (free CDN)
+### Core palette
 
----
+| Role | Value |
+|---|---|
+| Deep green | `#0a2e1f` |
+| Dark green | `#062418` |
+| Gold | `#f5a623` |
+| Warm background | `#fbfaf5` |
+| Surface | `#ffffff` |
 
-## 🚀 How to Use
+## Technology
 
-1. **Download** the `index.html` file.
-2. **Open** it in any web browser (Chrome, Firefox, Edge, Safari).
-3. **Deploy** to any web hosting service (Netlify, Vercel, GitHub Pages, or any shared hosting).
+- Semantic HTML5
+- Modern CSS with Grid, Flexbox, custom properties and responsive breakpoints
+- Vanilla JavaScript
+- Existing NACO badge asset
+- No build step or framework dependency
 
-### Customization Tips
+## Forms
 
-- **Contact Info** – Update phone numbers, email, address in the top bar, contact section, and footer.
-- **WhatsApp number** – Replace `2348123456789` in the floating button link (search `wa.me/2348123456789` in the code).
-- **Form submission** – Currently displays a success message on the frontend. To add backend email sending, integrate a service like Formspree, Netlify Forms, or PHP.
-- **Social media links** – Replace the `#` in footer and top bar with actual profile URLs.
+The enrolment/contact forms currently provide frontend confirmation only. They are intentionally structured so a backend endpoint or form provider can be connected later without redesigning the UI.
 
----
+## Local preview
 
-## 📄 Content Sections
+Open `index.html` in a modern browser, or serve the repository with any static HTTP server.
 
-1. **Hero** – Headline, subheadline, primary CTAs.
-2. **About Us** – Organization background + Mission & Vision cards.
-3. **What We Do** – Six core activities with icons.
-4. **Our Services** – Three major groups (Life Saving, Manpower Skills, Moral & Community Development).
-5. **Why Choose NACO** – Six value propositions.
-6. **Aims of NACO** – Six core aims.
-7. **Testimonials** – Three placeholder success stories (easily editable).
-8. **Get Started Form** – Captures name, email, phone, training area.
-9. **Contact Section** – Contact details + message form.
-10. **Footer** – Quick links, social icons, copyright.
-11. **Floating WhatsApp Button** – Persistent chat widget.
+Example:
 
----
+```bash
+python3 -m http.server 8080
+```
 
-## 🎨 Color Palette
+Then visit `http://localhost:8080`.
 
-| Role        | Color Code | Example                     |
-|-------------|------------|-----------------------------|
-| Primary     | `#0a2e1f`  | Dark green (headers, nav)   |
-| Accent      | `#f5a623`  | Gold/orange (buttons, icons)|
-| Background  | `#fafaf8`  | Off-white / warm light      |
-| Card Bg     | `#ffffff`  | White + subtle shadows      |
+## Deployment
 
----
+The site can be deployed directly as a static project to GitHub Pages, Netlify, Vercel or conventional shared hosting.
 
-## 📱 Responsiveness
+## Contact information currently represented
 
-- Mobile-first CSS with `@media (max-width: 768px)`.
-- Flexbox and grid wrap on all sections.
-- Touch-friendly buttons and form inputs.
+- Phone: `+234 813 014 4920`
+- Email: `hello@naco.org.ng`
+- Location: Kaduna, Nigeria
 
----
+Contact details and social links should be verified with NACO before production launch.
 
-## 📧 Form Handling
+## License
 
-Currently the forms use **frontend JavaScript** that shows a confirmation message without actually sending an email. To enable real email delivery:
-
-- Replace the form action with a service like **Formspree** (`https://formspree.io/f/your-endpoint`).
-- Or integrate **Netlify Forms** (add `data-netlify="true"` to the form).
-- Or connect to a backend PHP script.
+No license was specified in the original repository. Add the appropriate license before redistributing the project.
