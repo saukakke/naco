@@ -1,1 +1,82 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Secure NACO portal sign in"><title>Sign in | NACO Portal</title><link rel="icon" href="../badge.jpg"><link rel="stylesheet" href="assets/portal.css"></head><body class="login-page"><main class="login-shell"><section class="login-brand"><a href="../index.html"><img src="../badge.jpg" alt="NACO badge"></a><span>Normal Apprenticeship Company</span><h1>NACO Personnel Portal</h1><p>Secure access for authorised administrators, instructors and unit commanders.</p><div class="login-points"><span>✓ Role-based dashboard access</span><span>✓ Personnel and training records</span><span>✓ Rank, warrant and appointment management</span></div></section><section class="login-card"><div class="login-card-head"><span class="eyebrow">AUTHORISED ACCESS</span><h2>Sign in</h2><p>Choose your account type and enter your credentials.</p></div><form id="loginForm"><div class="role-grid"><label class="role-option"><input type="radio" name="role" value="admin" checked><span><strong>Admin</strong><small>Full portal management</small></span></label><label class="role-option"><input type="radio" name="role" value="instructor"><span><strong>Instructor</strong><small>Training & cadet access</small></span></label><label class="role-option"><input type="radio" name="role" value="commander"><span><strong>Unit Commander</strong><small>Unit personnel access</small></span></label></div><div class="field"><label for="identifier">Username / Service ID</label><input id="identifier" name="identifier" autocomplete="username" required placeholder="Enter your username or service ID"></div><div class="field"><label for="password">Password</label><div class="password-field"><input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password"><button type="button" id="togglePassword" class="password-toggle" aria-label="Show password">Show</button></div></div><label class="remember"><input type="checkbox" name="remember"> <span>Remember this device</span></label><button class="btn btn-primary login-btn" type="submit">Sign in to portal</button><div id="loginMessage" class="login-message" role="alert"></div></form><div class="login-demo"><strong>Portal prototype</strong><span>This interface is ready for backend authentication. Demo access uses the selected role and does not provide real security.</span></div><a class="back-link" href="../index.html">← Return to NACO website</a></section></main><script src="assets/auth.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Secure NACO personnel portal sign in">
+  <meta name="theme-color" content="#062418">
+  <title>Sign in | NACO Personnel Portal</title>
+  <link rel="icon" href="../badge.jpg">
+  <link rel="stylesheet" href="./assets/portal.css?v=2">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-brand">
+      <a href="../index.html" aria-label="Return to NACO website">
+        <img src="../badge.jpg" alt="NACO badge">
+      </a>
+      <span>Normal Apprenticeship Company</span>
+      <h1>NACO Personnel Portal</h1>
+      <p>Secure access for authorised administrators, instructors and unit commanders.</p>
+      <div class="login-points">
+        <span>✓ Role-based dashboard access</span>
+        <span>✓ Personnel and training records</span>
+        <span>✓ Rank, warrant and appointment management</span>
+      </div>
+    </section>
+
+    <section class="login-card" aria-labelledby="login-title">
+      <div class="login-card-head">
+        <span class="eyebrow">AUTHORISED ACCESS</span>
+        <h2 id="login-title">Sign in</h2>
+        <p>Choose your account type and enter your credentials.</p>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="role-grid" aria-label="Account type">
+          <label class="role-option">
+            <input type="radio" name="role" value="admin" checked>
+            <span><strong>Admin</strong><small>Full portal management</small></span>
+          </label>
+          <label class="role-option">
+            <input type="radio" name="role" value="instructor">
+            <span><strong>Instructor</strong><small>Training &amp; cadet access</small></span>
+          </label>
+          <label class="role-option">
+            <input type="radio" name="role" value="commander">
+            <span><strong>Unit Commander</strong><small>Unit personnel access</small></span>
+          </label>
+        </div>
+
+        <div class="field">
+          <label for="identifier">Username / Service ID</label>
+          <input id="identifier" name="identifier" type="text" autocomplete="username" required placeholder="Enter your username or service ID">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-field">
+            <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password">
+            <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <label class="remember">
+          <input type="checkbox" name="remember">
+          <span>Remember this device</span>
+        </label>
+
+        <button class="btn btn-primary login-btn" type="submit">Sign in to portal</button>
+        <div id="loginMessage" class="login-message" role="alert" aria-live="polite"></div>
+      </form>
+
+      <div class="login-demo">
+        <strong>Portal prototype</strong>
+        <span>This interface is ready for backend authentication. Demo access uses the selected role and does not provide real security.</span>
+      </div>
+      <a class="back-link" href="../index.html">← Return to NACO website</a>
+    </section>
+  </main>
+  <script src="./assets/auth.js?v=2"></script>
+</body>
+</html>
