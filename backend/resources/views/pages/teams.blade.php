@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title','Team | NACO') @section('content')<section class="container"><h1>ICT Team</h1><div class="cards"><article class="card"><h3>Auwal Usman</h3><p>ICT Team</p></article><article class="card"><h3>Babawo Ahmad</h3><p>ICT Team</p></article><article class="card"><h3>Yasin Muhammed Tukur</h3><p>ICT Team</p></article></div></section>@endsection
