@@ -1,0 +1,5 @@
+@extends('layouts.portal')
+@section('content')
+<div class="page-header"><div><p class="eyebrow">Ward movement</p><h1>Apply for Ward Transfer</h1><p>Your current HCS, required local/state authorities, destination HCS and National must complete their stages before the transfer takes effect.</p></div></div>
+<div class="form-card"><div class="notice">Current ward: <strong>{{ $cadet->ward->name }}</strong> — {{ $cadet->ward->lga->name }}, {{ $cadet->ward->lga->state->name }}</div><form method="POST" action="{{route('portal.ward-transfers.store')}}">@csrf<label for="to_ward_id">Destination Ward</label><select id="to_ward_id" name="to_ward_id" required><option value="">Select destination ward</option>@foreach($wards as $ward)<option value="{{$ward->id}}">{{$ward->name}} — {{$ward->lga->name}}, {{$ward->lga->state->name}}</option>@endforeach</select><label for="reason">Reason</label><textarea id="reason" name="reason" rows="5" maxlength="2000"></textarea><div class="actions"><a class="btn" href="{{route('portal.ward-transfers.index')}}">Cancel</a><button class="btn btn-primary" type="submit">Submit Application</button></div></form></div>
+@endsection
