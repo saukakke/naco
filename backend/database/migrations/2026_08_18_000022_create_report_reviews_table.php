@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::create('report_reviews',function(Blueprint $t){$t->id();$t->foreignId('report_id')->constrained('four_monthly_reports')->cascadeOnDelete();$t->foreignId('reviewer_id')->constrained('users')->restrictOnDelete();$t->string('level');$t->string('action');$t->text('comments')->nullable();$t->timestamp('reviewed_at');$t->timestamps();$t->index(['report_id','level']);});}public function down():void{Schema::dropIfExists('report_reviews');}};
