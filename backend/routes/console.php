@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schedule;
 
-// Scheduled commands can be registered here.
+Schedule::command('naco:warrants:process-expiry')->dailyAt('06:00')->withoutOverlapping()->onOneServer();
