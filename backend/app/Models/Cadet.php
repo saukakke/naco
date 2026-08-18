@@ -13,17 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Cadet extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'service_number', 'first_name', 'middle_name', 'last_name', 'phone',
-        'email', 'gender', 'date_of_birth', 'unit_id', 'rank_id', 'status',
-    ];
-
-    protected function casts(): array
-    {
-        return ['date_of_birth' => 'date'];
-    }
-
+    protected $fillable = ['service_number','first_name','middle_name','last_name','phone','email','gender','date_of_birth','unit_id','rank_id','status','id_card_expires_at'];
+    protected function casts(): array { return ['date_of_birth'=>'date','id_card_expires_at'=>'date']; }
     public function unit(): BelongsTo { return $this->belongsTo(Unit::class); }
     public function rank(): BelongsTo { return $this->belongsTo(Rank::class); }
     public function courses(): BelongsToMany { return $this->belongsToMany(Course::class)->withPivot(['status','completed_at','result'])->withTimestamps(); }
@@ -31,4 +22,5 @@ class Cadet extends Model
     public function promotions(): HasMany { return $this->hasMany(Promotion::class); }
     public function demotions(): HasMany { return $this->hasMany(Demotion::class); }
     public function postAssignments(): HasMany { return $this->hasMany(PostAssignment::class); }
+    public function idCardRenewals(): HasMany { return $this->hasMany(IdCardRenewalApplication::class); }
 }
