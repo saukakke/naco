@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title','Impact | NACO') @section('content')<section class="container"><h1>Community Impact</h1><p>NACO focuses on skills, discipline, emergency readiness, self-reliance and community development.</p></section>@endsection
