@@ -29,7 +29,7 @@ class WardTransferController extends Controller
         $cadet = $request->user()->cadet;
         abort_unless($cadet, 403);
         $cadet->load('ward.lga.state');
-        return view('portal.ward-transfers.create', ['cadet' => $cadet, 'wards' => Ward::with('lga.state')->whereKeyNot($cadet->ward_id)->orderBy('name')->get()]);
+        return view('portal.ward-transfers.create', ['cadet' => $cadet, 'wards' => Ward::with('lga.state')->where('id', '!=', $cadet->ward_id)->orderBy('name')->get()]);
     }
 
     public function store(Request $request, WardTransferService $service): RedirectResponse
