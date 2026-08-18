@@ -27,5 +27,6 @@ Route::prefix('portal')->name('portal.')->group(function (): void {
         Route::post('/unit-transfers', [UnitTransferController::class, 'store'])->name('unit-transfers.store');
         Route::post('/unit-transfers/{transfer}/release', [UnitTransferController::class, 'release'])->name('unit-transfers.release');
         Route::post('/unit-transfers/{transfer}/accept', [UnitTransferController::class, 'accept'])->name('unit-transfers.accept');
+        Route::post('/unit-transfers/{transfer}/verify-payment', [UnitTransferController::class, 'verifyPayment'])->name('unit-transfers.verify-payment');
     });
 });
