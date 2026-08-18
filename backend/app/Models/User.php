@@ -16,4 +16,9 @@ class User extends Authenticatable {
  public function lga():BelongsTo{return $this->belongsTo(Lga::class);}
  public function state():BelongsTo{return $this->belongsTo(State::class);}
  public function isAdmin():bool{return in_array($this->role,['admin','administrator'],true);}
+ public function isUnitCommander():bool{return in_array($this->role,['unit_commander','unit-commander'],true);}
+ public function isHcs():bool{return in_array($this->role,['hcs','ward_hcs'],true);}
+ public function isLgaChairman():bool{return in_array($this->role,['lga_chairman','chairman_self_reliance'],true);}
+ public function isStateController():bool{return in_array($this->role,['state_controller','state'],true);}
+ public function isNational():bool{return in_array($this->role,['national','national_admin'],true);}
 }
