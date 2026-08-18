@@ -3,8 +3,8 @@ services:
     name: naco
     runtime: php
     rootDir: backend
-    buildCommand: composer install --no-dev --optimize-autoloader && chmod +x scripts/prepare-sqlite.sh && ./scripts/prepare-sqlite.sh
-    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    buildCommand: composer install --no-dev --optimize-autoloader && chmod +x scripts/start-render.sh scripts/prepare-sqlite.sh
+    startCommand: ./scripts/start-render.sh
     disk:
       name: naco-data
       mountPath: /var/data
