@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::create('report_attachments',function(Blueprint $t){$t->id();$t->foreignId('report_id')->constrained('four_monthly_reports')->cascadeOnDelete();$t->foreignId('uploaded_by')->constrained('users')->restrictOnDelete();$t->string('file_path');$t->string('original_name');$t->string('mime_type')->nullable();$t->unsignedBigInteger('size')->nullable();$t->timestamps();});}public function down():void{Schema::dropIfExists('report_attachments');}};
