@@ -18,5 +18,5 @@ class WardTransferService {
  private function state(WardTransfer $t,string $expected):void{if($t->status!==$expected)throw ValidationException::withMessages(['transfer'=>'This approval is not the current step in the transfer workflow.']);}
  private function update(WardTransfer $t,array $data):void{$t->update($data);}
  private function destinationLgaRequired(WardTransfer $t):bool{$t->loadMissing('fromWard.lga','toWard.lga');return $t->fromWard->lga_id!==$t->toWard->lga_id;}
- private function destinationStateRequired(WardTransfer $t):bool{$t->loadMissing('fromWard.lga.state','toWard.lga.state');return $t->fromWard->lga->state_id!==$t->toWard->lga->state_id;}
+ private function destinationStateRequired(WardTransfer $t):bool{$t->loadMissing('fromWard.lga','toWard.lga');return $t->fromWard->lga_id!==$t->toWard->lga_id;}
 }
