@@ -1,0 +1,15 @@
+/vendor/
+/node_modules/
+/public/build/
+.env
+.env.*
+!.env.example
+.phpunit.result.cache
+.php-cs-fixer.cache
+.phpstan.cache
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
