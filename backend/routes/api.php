@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\CadetController;
+use App\Http\Controllers\Api\DemotionController;
+use App\Http\Controllers\Api\LookupController;
+use App\Http\Controllers\Api\PromotionController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', static fn () => response()->json([
@@ -11,5 +16,14 @@ Route::get('/health', static fn () => response()->json([
 ]));
 
 Route::middleware('auth:sanctum')->group(function (): void {
-    Route::get('/me', static fn (\Illuminate\Http\Request $request) => response()->json($request->user()));
+    Route::get('/me', static fn (Request $request) => response()->json($request->user()));
+
+    Route::get('/units', [LookupController::class, 'units']);
+    Route::get('/ranks', [LookupController::class, 'ranks']);
+    Route::get('/posts', [LookupController::class, 'posts']);
+    Route::get('/courses', [LookupController::class, 'courses']);
+
+    Route::apiResource('cadets', CadetController::class)->only(['index', 'show', 'store', 'update']);
+    Route::post('/cadets/{cadet}/promotions', [PromotionController::class, 'store']);
+    Route::post('/cadets/{cadet}/demotions', [DemotionController::class, 'store']);
 });
