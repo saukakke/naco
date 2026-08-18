@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.home')->name('home');
@@ -15,9 +16,8 @@ Route::view('/impact', 'pages.impact')->name('impact');
 Route::view('/contact', 'pages.contact')->name('contact');
 
 Route::prefix('portal')->name('portal.')->group(function (): void {
-    Route::view('/login', 'auth.login')->name('login');
-
-    Route::middleware('auth')->group(function (): void {
-        Route::view('/dashboard', 'portal.dashboard')->name('dashboard');
-    });
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+    Route::view('/dashboard', 'portal.dashboard')->middleware('auth')->name('dashboard');
 });
