@@ -1,0 +1,53 @@
+name: Backend Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-validation.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-validation.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, pdo_sqlite
+          coverage: none
+
+      - name: Validate Composer configuration
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Check PHP syntax
+        run: find app bootstrap config database public resources routes -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Prepare application
+        run: |
+          cp .env.example .env
+          mkdir -p database
+          touch database/database.sqlite
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i '/^DB_HOST=/d;/^DB_PORT=/d;/^DB_DATABASE=/d;/^DB_USERNAME=/d;/^DB_PASSWORD=/d' .env
+          php artisan key:generate --force
+
+      - name: Validate migrations
+        run: php artisan migrate --force
+
+      - name: Validate application boot and routes
+        run: php artisan about && php artisan route:list --except-vendor
