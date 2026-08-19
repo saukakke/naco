@@ -15,19 +15,23 @@ class AuthController extends Controller
 
     public function authenticate(Request $request): RedirectResponse
     {
-        $credentials = $request->validate(['email' => ['required','email'], 'password' => ['required','string'], 'role' => ['required','in:admin,instructor,unit_commander']]);
-        if (! Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password'], 'role' => $credentials['role']], $request->boolean('remember'))) {
-            return back()->withErrors(['email' => 'The supplied credentials are invalid.'])->onlyInput('email');
+        $credentials = $request->validate([
+            'login' => ['required','string','max:150'],
+            'password' => ['required','string'],
+            'role' => ['required','in:super_admin,admin,instructor,unit_commander,cadet,hcs,chairman_self_reliance,state_controller'],
+        ]);
+
+        $field = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'cadet_id';
+        if (! Auth::attempt([$field => $credentials['login'], 'password' => $credentials['password'], 'role' => $credentials['role']], $request->boolean('remember'))) {
+            return back()->withErrors(['login' => 'The supplied credentials are invalid.'])->onlyInput('login');
         }
         $request->session()->regenerate();
-        return redirect()->route('portal.dashboard');
+        return redirect()->intended(route('portal.dashboard'));
     }
 
     public function logout(Request $request): RedirectResponse
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        Auth::logout(); $request->session()->invalidate(); $request->session()->regenerateToken();
         return redirect()->route('portal.login');
     }
 }
