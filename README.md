@@ -2,58 +2,47 @@
 
 ![NACO](https://img.shields.io/badge/NACO-Personnel%20Portal-0B3D2E?style=for-the-badge)
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=flat-square&logo=php&logoColor=white)
-![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=flat-square&logo=php&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Railway](https://img.shields.io/badge/Deploy-Railway-111111?style=flat-square&logo=railway&logoColor=white)
 ![Blade](https://img.shields.io/badge/UI-Blade%20%2B%20CSS-0B3D2E?style=flat-square)
-![License](https://img.shields.io/badge/License-To%20be%20defined-lightgrey?style=flat-square)
 
-NACO is a full organizational website and personnel management portal for the **Normal Apprenticeship Company**. The platform combines the public-facing organization website with a Laravel 12 personnel portal for cadets, instructors, unit commanders, HCS/ward commanders, LGA leadership, state controllers and administrators.
+NACO is a Laravel 12 organizational website and personnel management portal for the Normal Apprenticeship Company. It combines the public website with authenticated personnel management for cadets, instructors, unit commanders, HCS/ward leadership, LGA leadership, state controllers and administrators.
 
-> **Design principle:** premium, disciplined and institutional. The interface retains NACO's **dark green, yellow and black** identity throughout the public website and authenticated portal.
+## Status
 
-## Project status
-
-The project is being developed as a complete Laravel application. The public website, authentication foundation, personnel workflows, role-based access model and SQLite/Render deployment configuration are being implemented incrementally.
+The project is being developed as a complete Laravel application. The deployment target is **Railway**, with **PostgreSQL** as the production database. Render and SQLite are no longer the deployment/database targets.
 
 ## Core capabilities
 
-### Public website
-
-- Home / organization overview
-- About NACO
-- Programs and activities
-- Leadership structure
-- ICT/team section
-- Gallery
-- Blog
-- Impact
-- Contact
-- Public personnel verification by **Service Number**
-
-### Personnel portal
-
-The portal is designed around these core entities:
-
-- Cadet
-- Instructor
-- Course
-- Unit
-- Warrant
-- Promotion
-- Demotion
-- Post
-
-Additional operational resources include ID-card renewals, unit transfers, ward transfers, reports, notifications, personnel documents and audit records.
+- Public organization website
+- Leadership, ICT team, gallery, blog and contact pages
+- Public Service Number verification at `/verify`
+- Cadet and instructor management
+- Units A–F
+- Courses and course results
+- Warrants and instructor status
+- Promotions and demotions
+- Official promotion documents
+- Posts and organizational appointments
+- Unit transfers
+- Ward transfers with hierarchical approval
+- ID-card renewal
+- Four-monthly reports
+- Notifications and email notifications
+- Personnel documents
+- Audit logs
+- Role-based and organizational-scope authorization
 
 ## Cadet identity
 
-The **Service Number is the canonical identity of a Cadet**. It is unique to every cadet and is used throughout the application wherever a cadet identifier is required.
+The **Service Number is the canonical unique identifier for every Cadet** and is used wherever a cadet identifier is required.
 
 ```text
 Cadet
-  └── service_number (unique primary identifier)
-        ├── Warrants
+  └── service_number
         ├── Courses
+        ├── Warrants
         ├── Promotions
         ├── Demotions
         ├── Transfers
@@ -62,11 +51,7 @@ Cadet
         └── Personnel records
 ```
 
-The public verification page accepts a Service Number and can be used without authentication.
-
 ## Organizational hierarchy
-
-NACO's operational hierarchy is:
 
 ```text
 National
@@ -80,137 +65,85 @@ HCS / Ward Commander
 Cadets and Instructors
 ```
 
-Access is scoped to this hierarchy. A ward commander manages personnel in the commander's ward; an LGA chairman manages records within the LGA; and a state controller can view records across the state, its LGAs and wards.
+Access is scoped to the organizational jurisdiction. Ward commanders can view personnel in their ward; LGA chairmen can view information in their LGA; state controllers can view their state, its LGAs and wards; authorized national/admin roles can operate across jurisdictions.
 
-## Roles and access
+## Roles
 
-| Role | Scope / privileges |
+| Role | Scope |
 |---|---|
-| **Super Admin** | Full system access; can grant and revoke Admin privileges |
-| **Admin** | Full operational privileges except Super Admin management |
-| **State Controller** | State, LGAs, wards and personnel within the state |
-| **Chairman Self-Reliance** | Own LGA, wards and personnel within the LGA |
-| **HCS / Ward Commander** | Own ward, including cadets and instructors |
-| **Unit Commander** | Resources belonging to the assigned unit |
-| **Instructor** | Instructor, course, warrant and permitted cadet resources |
-| **Cadet** | Own profile and cadet-authorized resources |
+| Super Admin | Full system access; grant/revoke Admin |
+| Admin | Full operational access except Super Admin management |
+| State Controller | Own state, LGAs, wards and personnel |
+| Chairman Self-Reliance | Own LGA, wards and personnel |
+| HCS / Ward Commander | Own ward, cadets and instructors |
+| Unit Commander | Assigned unit resources |
+| Instructor | Instructor/course/warrant resources and permitted cadets |
+| Cadet | Own resources |
 
-Authorization is intended to be enforced server-side at route/controller/policy/query level, not merely by hiding navigation links.
+Authorization must be enforced server-side through middleware, policies and scoped queries.
 
 ## Instructor and warrant rules
 
-- A cadet may also be an instructor.
+- A cadet can also be an instructor.
 - An instructor must have a valid warrant.
-- Warrants are obtained through instructor course training.
-- All NACO courses are instructor courses.
-- A cadet may hold multiple warrants for multiple courses.
-- A cadet ceases to be an active instructor when the relevant warrant expires until another valid warrant is obtained.
-- Course training requires payment and successful completion before a warrant can be issued.
+- A warrant is obtained through instructor course training and successful completion.
+- All courses are instructor courses.
+- A cadet can have multiple warrants for multiple courses.
+- When a warrant expires, the cadet is no longer an active instructor until another valid warrant is obtained.
+- Course training has a payment requirement before the warrant process can complete.
 
-## Units
+## Units and transfers
 
-Every cadet belongs to one of the six operational units:
+Every cadet belongs to Unit A, B, C, D, E or F.
 
-- Unit A
-- Unit B
-- Unit C
-- Unit D
-- Unit E
-- Unit F
-
-### Unit transfer
-
-A cadet changing units follows an approval workflow:
+Unit transfer:
 
 ```text
 Cadet applies
-   ↓
-Current Unit Commander releases
-   ↓
-Destination Unit Commander accepts
-   ↓
-Payment
-   ↓
-Payment verification
-   ↓
-Unit changed
+ → Current Unit Commander releases
+ → Destination Unit Commander accepts
+ → Payment
+ → Payment verified
+ → Unit changes
 ```
 
-## Ward transfer
-
-Ward transfers require hierarchical approval. The current HCS must release the cadet, the relevant LGA and state authorities must acknowledge the transfer, the destination HCS must accept the cadet, and **National approval is final**.
-
-When source and destination wards belong to different LGAs, both relevant LGA chairmen and state controllers participate in the approval process.
-
-Without National approval, the transfer does not take effect.
+Ward transfer requires source HCS release, LGA/state acknowledgements, destination HCS acceptance and final National approval. If the source and destination wards are in different LGAs, both relevant LGA chairmen and state controllers participate.
 
 ## ID-card renewal
 
-A cadet can apply for ID-card renewal only when the existing card is **two months from its due date**. The portal handles the application and subsequent administrative/payment workflow.
+A cadet can apply for renewal only when the existing ID card is two months from its due date.
 
 ## Ranks
 
 ### Other ranks
-
-- Private
-- Corporal
-- Sergeant
-- Staff Sergeant
-- Senior Staff Sergeant
-- Warrant Officer 2
-- Warrant Officer 1
+Private, Corporal, Sergeant, Staff Sergeant, Senior Staff Sergeant, Warrant Officer 2, Warrant Officer 1.
 
 ### Junior officers
-
-- Second Lieutenant
-- Lieutenant
-- Captain
+Second Lieutenant, Lieutenant, Captain.
 
 ### Senior officers
-
-- Master
-- Senior Master
-- Right Comrade
+Master, Senior Master, Right Comrade.
 
 ### Superior officers
+Engineer, Chief Engineer, Rear Marshal, Cadet Marshal.
 
-- Engineer
-- Chief Engineer
-- Rear Marshal
-- Cadet Marshal
-
-A promotion moves a cadet to a higher rank and a demotion moves the cadet to a lower rank. A promotion produces an official document for the new rank.
+Promotion moves to a higher rank and generates an official document. Demotion moves to a lower rank while preserving history.
 
 ## Leadership posts
 
 ### National
-
-- General Officer
-- Chief Instructor
+General Officer; Chief Instructor.
 
 ### State
-
-- State Controller
-- Deputy State Controller
-- National Medical Director
-- Auditor
-- Secretary
-- National Parade Commander
-- National Intelligent Director
-- National Provost Marshal
-- Unit Sergeant Major
+State Controller; Deputy State Controller; National Medical Director; Auditor; Secretary; National Parade Commander; National Intelligent Director; National Provost Marshal; Unit Sergeant Major.
 
 ### LGA
-
-- Chairman Self-Reliance
+Chairman Self-Reliance.
 
 ### Ward
-
-- HCS
+HCS.
 
 ## Four-monthly reporting
-
-Ward HCS officers submit a four-month report to the Chairman Self-Reliance. The report progresses upward through the organization:
 
 ```text
 Ward HCS
@@ -222,86 +155,66 @@ State Controller
 National
 ```
 
-The portal supports report submission, review and notification workflows.
-
 ## Authentication
 
-The portal uses authenticated access without public self-registration.
+There is **no public registration**. Authorized personnel sign in through the portal. Supported roles include Cadet, Instructor, Unit Commander, HCS, Chairman Self-Reliance, State Controller, Admin and Super Admin.
 
-Supported account roles include:
+## Public verification
 
-- Cadet
-- Instructor
-- Unit Commander
-- HCS / Ward Commander
-- Chairman Self-Reliance
-- State Controller
-- Admin
-- Super Admin
+`/verify` is available to authenticated and unauthenticated visitors. Verification uses the Cadet's Service Number and returns only controlled public verification information.
 
-Cadet authentication is based on the unique Service Number, while authorized administrative accounts may use their configured account credentials.
-
-## Public Service Number verification
-
-The verification page is intentionally available to both authenticated and unauthenticated visitors:
-
-```text
-/verify
-```
-
-A visitor enters a Service Number and receives a controlled verification result. Private personnel information is not intended to be exposed through public verification.
-
-## Technology stack
-
-### Backend
+## Technology
 
 - Laravel 12
-- PHP
+- PHP 8.3
+- PostgreSQL
 - Laravel Blade
-- Laravel authentication/session infrastructure
+- Vite/CSS/JavaScript
+- Laravel session authentication
 - Policies and role middleware
-- SQLite
+- Railway deployment
 
-### Frontend
+## Railway + PostgreSQL deployment
 
-- Blade templates
-- Semantic HTML
-- Modern CSS
-- CSS Grid / Flexbox
-- Responsive layouts
-- Vanilla JavaScript where required
-- Premium UI/UX design system
+The repository contains `railway.json` and a PostgreSQL-ready `backend/Dockerfile`.
 
-### Deployment
+The Railway project should contain:
 
-- Render
-- SQLite with a persistent disk
-- Database migrations executed during deployment/startup
-- Laravel queue support for notifications
+1. A Laravel application service connected to this repository.
+2. A Railway PostgreSQL service.
+3. The PostgreSQL service variables exposed to the application, preferably through Railway's `DATABASE_URL`.
+4. `APP_KEY` and production application settings configured as Railway variables.
+5. SMTP variables configured for email notifications.
 
-## SQLite on Render
+Required production database configuration can be represented as:
 
-Production SQLite is stored on the Render persistent disk:
-
-```text
-/var/data/database.sqlite
+```env
+DB_CONNECTION=pgsql
+DATABASE_URL=${{Postgres.DATABASE_URL}}
 ```
 
-The application is configured to create the database file when necessary and run migrations with:
+Alternatively configure the standard variables:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=...
+DB_PORT=5432
+DB_DATABASE=...
+DB_USERNAME=...
+DB_PASSWORD=...
+```
+
+The application startup runs:
 
 ```bash
 php artisan migrate --force
+php artisan optimize
+php artisan serve --host=0.0.0.0 --port=$PORT
 ```
 
-A Render persistent disk is required because SQLite is file-based and the database must survive service recreation/deployment.
+Do not commit production credentials.
 
-## Email notifications
-
-The portal supports web notifications and an email notification layer. Production SMTP credentials should be supplied through Render environment variables and must never be committed to the repository.
-
-## Local development
-
-Clone the repository and enter the Laravel backend:
+## Local PostgreSQL setup
 
 ```bash
 git clone https://github.com/saukakke/naco.git
@@ -311,26 +224,25 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Create the SQLite database:
+Create a PostgreSQL database named `naco`, then configure:
 
-```bash
-mkdir -p database
-touch database/database.sqlite
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=naco
+DB_USERNAME=postgres
+DB_PASSWORD=your-password
 ```
 
-Run migrations:
+Run:
 
 ```bash
 php artisan migrate
-```
-
-Start the application:
-
-```bash
 php artisan serve
 ```
 
-For frontend assets, install the Node dependencies and run the Vite development server when required by the project configuration:
+Frontend assets:
 
 ```bash
 npm install
@@ -339,17 +251,14 @@ npm run dev
 
 ## Environment variables
 
-At minimum, production should define:
-
 ```env
 APP_ENV=production
 APP_DEBUG=false
 APP_KEY=base64:...
-APP_URL=https://your-domain.example
+APP_URL=https://your-railway-domain.example
 
-DB_CONNECTION=sqlite
-DB_DATABASE=/var/data/database.sqlite
-DB_FOREIGN_KEYS=true
+DB_CONNECTION=pgsql
+DATABASE_URL=...
 
 SESSION_DRIVER=file
 CACHE_STORE=file
@@ -366,13 +275,9 @@ MAIL_FROM_ADDRESS=...
 MAIL_FROM_NAME="NACO"
 ```
 
-Never commit real credentials, API keys, SMTP passwords or production `.env` files.
-
 ## Design system
 
-The UI uses a premium institutional visual language based on the NACO identity rather than replacing it with generic SaaS colors.
-
-### Brand colors
+The UI follows a premium institutional design while preserving NACO's brand identity.
 
 | Role | Value |
 |---|---|
@@ -383,88 +288,44 @@ The UI uses a premium institutional visual language based on the NACO identity r
 | Surface | `#F5F7F4` |
 | White | `#FFFFFF` |
 
-Design priorities include:
-
-- Strong hierarchy
-- Restrained use of color
-- High-contrast CTAs
-- Consistent spacing
-- Responsive navigation
-- Accessible focus states
-- Clear role-oriented portal navigation
-- Dense but readable administrative tables
-- Premium cards and command-centre layouts
-
 ## Repository structure
 
 ```text
 naco/
 ├── backend/
 │   ├── app/
-│   │   ├── Http/
-│   │   ├── Models/
-│   │   └── Policies/
 │   ├── database/
-│   │   ├── migrations/
-│   │   └── seeders/
 │   ├── resources/
-│   │   ├── css/
-│   │   ├── js/
-│   │   └── views/
 │   ├── routes/
-│   └── scripts/
-├── render.yaml
+│   ├── Dockerfile
+│   └── README.md
+├── docs/
+│   ├── PORTAL-DOMAIN.md
+│   └── NACO-PORTAL-DOCUMENTATION.md
+├── railway.json
 └── README.md
 ```
 
-## Security principles
+## Security
 
 - No public registration.
-- Authentication is required for protected portal resources.
-- Authorization must be enforced server-side.
-- Personnel access follows organizational scope.
-- Super Admin is protected from Admin role management.
-- Public Service Number verification exposes only controlled verification information.
-- Production credentials remain in environment variables.
-- SQLite production data is stored on persistent infrastructure rather than committed to Git.
+- Protected portal resources require authentication.
+- Authorization is server-side.
+- Organizational scope is enforced for personnel access.
+- Service Number is the canonical Cadet identifier.
+- Public verification exposes controlled information only.
+- Secrets remain in Railway environment variables.
+- PostgreSQL is the production persistence layer.
 
-## Development conventions
+## Development convention
 
-When implementing new NACO features:
+For a new feature, implement all required migrations, models, controllers, policies, validation, routes, notifications, views and tests together; verify relationships and authorization; then push the completed implementation to `main`.
 
-1. Create all required backend files together.
-2. Add migrations for persistent data changes.
-3. Add policies/middleware for authorization.
-4. Enforce organizational scope in queries/controllers.
-5. Add validation and appropriate error handling.
-6. Add notification/audit behavior where required.
-7. Update Blade UI using the existing NACO design system.
-8. Verify routes, migrations and relationships before deployment.
-9. Push completed implementation work to `main` when the feature is complete.
+## Documentation
 
-## Deployment
-
-The repository contains Render configuration for the Laravel backend. Before production deployment, configure:
-
-- Render persistent disk mounted at `/var/data`
-- `APP_KEY`
-- `APP_URL`
-- Production mail credentials
-- Any required third-party service credentials
-
-Then deploy the `main` branch and confirm migrations complete successfully.
-
-## Contact
-
-The original project content contains the following contact information, which should be verified before production launch:
-
-- Phone: `+234 813 014 4920`
-- Email: `hello@naco.org.ng`
-- Location: Kaduna, Nigeria
-
-## License
-
-No license has been formally specified for the repository. Add the appropriate license before redistribution.
+- Backend architecture: `backend/README.md`
+- Domain specification: `docs/PORTAL-DOMAIN.md`
+- Full project documentation: `docs/NACO-PORTAL-DOCUMENTATION.md`
 
 ## Repository
 
