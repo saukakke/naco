@@ -24,13 +24,7 @@ return new class extends Migration {
 
     public function up(): void
     {
-        if (! Schema::hasTable('cadets')) {
-            return;
-        }
-
-        // Current NACO schema already uses service_number as the Cadet primary key.
-        // This branch exists only for databases created from an older integer-ID schema.
-        if (! Schema::hasColumn('cadets', 'id')) {
+        if (! Schema::hasTable('cadets') || ! Schema::hasColumn('cadets', 'id')) {
             return;
         }
 
@@ -42,6 +36,16 @@ return new class extends Migration {
             $columnType = Schema::getColumnType($table, 'cadet_id');
             if (! in_array($columnType, ['integer', 'bigint', 'int', 'int4', 'int8'], true)) {
                 continue;
+            }
+
+            $foreignKeys = Schema::getForeignKeys($table);
+            foreach ($foreignKeys as $foreignKey) {
+                if (in_array('cadet_id', $foreignKey['columns'] ?? [], true)) {
+                    Schema::table($table, function (Blueprint $schema): void {
+                        $schema->dropForeign(['cadet_id']);
+                    });
+                    break;
+                }
             }
 
             Schema::table($table, function (Blueprint $schema): void {
@@ -69,13 +73,16 @@ return new class extends Migration {
 
             Schema::table($table, function (Blueprint $schema): void {
                 $schema->renameColumn('cadet_service_number', 'cadet_id');
+                $schema->foreign('cadet_id')
+                    ->references('service_number')
+                    ->on('cadets')
+                    ->cascadeOnDelete();
             });
         }
     }
 
     public function down(): void
     {
-        // The migration is intentionally irreversible because converting service numbers
-        // back to historical integer IDs is unsafe after records have been created.
+        // Service-number references are intentionally not converted back to historical IDs.
     }
 };
