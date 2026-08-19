@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,8 +11,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Cadet extends Model
 {
  use HasFactory;
+ protected $primaryKey='service_number'; protected $keyType='string'; public $incrementing=false;
  protected $fillable=['service_number','first_name','middle_name','last_name','phone','email','gender','date_of_birth','unit_id','ward_id','rank_id','status','id_card_expires_at'];
  protected function casts():array{return ['date_of_birth'=>'date','id_card_expires_at'=>'date'];}
+ public function getRouteKeyName():string{return 'service_number';}
  public function unit():BelongsTo{return $this->belongsTo(Unit::class);} public function ward():BelongsTo{return $this->belongsTo(Ward::class);} public function rank():BelongsTo{return $this->belongsTo(Rank::class);}
  public function courses():BelongsToMany{return $this->belongsToMany(Course::class)->withPivot(['status','completed_at','result','payment_reference','paid_at'])->withTimestamps();}
  public function warrants():HasMany{return $this->hasMany(Warrant::class);} public function instructor():HasOne{return $this->hasOne(Instructor::class);} public function promotions():HasMany{return $this->hasMany(Promotion::class);} public function demotions():HasMany{return $this->hasMany(Demotion::class);} public function postAssignments():HasMany{return $this->hasMany(PostAssignment::class);} public function idCardRenewals():HasMany{return $this->hasMany(IdCardRenewalApplication::class);} public function wardTransfers():HasMany{return $this->hasMany(WardTransfer::class);}
