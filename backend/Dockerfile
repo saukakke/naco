@@ -9,12 +9,12 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy the Laravel backend manifest first so Docker can cache dependency installation.
+# Copy the Laravel backend manifest first so Docker can cache dependency resolution.
 COPY composer.json ./
-COPY composer.lock* ./
 
-# Generate composer.lock when it is not committed, then install production dependencies.
-RUN if [ ! -f composer.lock ]; then composer update --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts; else composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts; fi
+# composer.lock is intentionally not required in the repository. Generate it during
+# the image build so Railway can deploy from composer.json alone.
+RUN composer update --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
 
 COPY . .
 
