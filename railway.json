@@ -9,6 +9,7 @@
     "restartPolicyMaxRetries": 10,
     "healthcheckPath": "/up",
     "healthcheckTimeout": 30,
+    "preDeployCommand": "php artisan migrate --force",
     "startCommand": "naco-entrypoint"
   }
 }
