@@ -8,13 +8,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
-COPY composer.json ./
-RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
 
 COPY . .
-RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache \
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R ug+rwx storage bootstrap/cache \
     && php artisan package:discover --ansi
 
-EXPOSE 10000
-CMD sh -c 'php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}'
+COPY docker/entrypoint.sh /usr/local/bin/naco-entrypoint
+RUN chmod +x /usr/local/bin/naco-entrypoint
+
+EXPOSE 8080
+ENTRYPOINT ["naco-entrypoint"]
