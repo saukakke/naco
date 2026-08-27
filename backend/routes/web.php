@@ -1,7 +1,73 @@
 <?php
 
 declare(strict_types=1);
-use App\Http\Controllers\AuthController;use App\Http\Controllers\VerifyController;use App\Http\Controllers\Portal\AuditLogController;use App\Http\Controllers\Portal\FourMonthlyReportController;use App\Http\Controllers\Portal\IdCardRenewalController;use App\Http\Controllers\Portal\InstructorController;use App\Http\Controllers\Portal\PersonnelController;use App\Http\Controllers\Portal\RoleManagementController;use App\Http\Controllers\Portal\UnitTransferController;use App\Http\Controllers\Portal\WardTransferController;use Illuminate\Support\Facades\Route;
-Route::view('/', 'pages.home')->name('home');Route::view('/about','pages.about')->name('about');Route::view('/programs','pages.programs')->name('programs');Route::view('/leadership','pages.leadership')->name('leadership');Route::view('/teams','pages.teams')->name('teams');Route::view('/gallery','pages.gallery')->name('gallery');Route::view('/blog','pages.blog')->name('blog');Route::view('/impact','pages.impact')->name('impact');Route::view('/contact','pages.contact')->name('contact');
-Route::get('/verify',[VerifyController::class,'index'])->name('verify');Route::post('/verify',[VerifyController::class,'search'])->middleware('throttle:30,1')->name('verify.search');
-Route::prefix('portal')->name('portal.')->group(function():void{Route::get('/login',[AuthController::class,'login'])->name('login');Route::post('/login',[AuthController::class,'authenticate'])->name('authenticate');Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->name('logout');Route::middleware('auth')->group(function():void{Route::view('/dashboard','portal.dashboard')->name('dashboard');Route::get('/admin/roles',[RoleManagementController::class,'index'])->name('admin.roles')->middleware('role:super_admin');Route::patch('/admin/roles/{user}',[RoleManagementController::class,'update'])->name('admin.roles.update')->middleware('role:super_admin');Route::patch('/admin/roles/{user}/revoke',[RoleManagementController::class,'revokeAdmin'])->name('admin.roles.revoke')->middleware('role:super_admin');Route::get('/personnel/{cadet}',[PersonnelController::class,'show'])->name('personnel.show');Route::post('/personnel/{cadet}/documents',[PersonnelController::class,'uploadDocument'])->name('personnel.documents.upload');Route::get('/personnel/documents/{document}/download',[PersonnelController::class,'downloadDocument'])->name('portal.personnel.documents.download');Route::delete('/personnel/documents/{document}',[PersonnelController::class,'destroyDocument'])->name('portal.personnel.documents.destroy');Route::get('/notifications',[PersonnelController::class,'notifications'])->name('notifications.index');Route::post('/notifications/{notification}/read',[PersonnelController::class,'readNotification'])->name('notifications.read');Route::get('/audit-logs',[AuditLogController::class,'index'])->name('audit-logs.index');Route::get('/reports',[FourMonthlyReportController::class,'index'])->name('reports.index');Route::get('/reports/create',[FourMonthlyReportController::class,'create'])->name('reports.create');Route::post('/reports',[FourMonthlyReportController::class,'store'])->name('reports.store');Route::get('/reports/{report}',[FourMonthlyReportController::class,'show'])->name('reports.show');Route::post('/reports/{report}/submit',[FourMonthlyReportController::class,'submit'])->name('reports.submit');Route::post('/reports/{report}/review',[FourMonthlyReportController::class,'review'])->name('reports.review');Route::get('/unit-transfers',[UnitTransferController::class,'index'])->name('unit-transfers.index');Route::get('/unit-transfers/create',[UnitTransferController::class,'create'])->name('unit-transfers.create');Route::post('/unit-transfers',[UnitTransferController::class,'store'])->name('unit-transfers.store');Route::post('/unit-transfers/{transfer}/release',[UnitTransferController::class,'release'])->name('unit-transfers.release');Route::post('/unit-transfers/{transfer}/accept',[UnitTransferController::class,'accept'])->name('unit-transfers.accept');Route::post('/unit-transfers/{transfer}/verify-payment',[UnitTransferController::class,'verifyPayment'])->name('unit-transfers.verify-payment');Route::get('/id-card-renewals',[IdCardRenewalController::class,'index'])->name('id-card-renewals.index');Route::get('/id-card-renewals/create',[IdCardRenewalController::class,'create'])->name('id-card-renewals.create');Route::post('/id-card-renewals',[IdCardRenewalController::class,'store'])->name('id-card-renewals.store');Route::post('/id-card-renewals/{application}/verify-payment',[IdCardRenewalController::class,'verifyPayment'])->name('id-card-renewals.verify-payment');Route::post('/id-card-renewals/{application}/approve',[IdCardRenewalController::class,'approve'])->name('id-card-renewals.approve');Route::post('/id-card-renewals/{application}/issue',[IdCardRenewalController::class,'issue'])->name('id-card-renewals.issue');Route::get('/ward-transfers',[WardTransferController::class,'index'])->name('ward-transfers.index');Route::get('/ward-transfers/create',[WardTransferController::class,'create'])->name('ward-transfers.create');Route::post('/ward-transfers',[WardTransferController::class,'store'])->name('ward-transfers.store');Route::post('/ward-transfers/{transfer}/{action}',[WardTransferController::class,'action'])->whereIn('action',['release','source-lga','source-state','destination-accept','destination-lga','destination-state','national-approve'])->name('ward-transfers.action');Route::get('/instructors',[InstructorController::class,'index'])->name('instructors.index');Route::get('/instructors/courses',[InstructorController::class,'courses'])->name('instructors.courses');Route::post('/instructors/courses/{course}/enroll',[InstructorController::class,'enroll'])->name('instructors.enroll');Route::get('/instructors/warrants/{warrant}',[InstructorController::class,'showWarrant'])->name('instructors.warrant');});});
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\VerifyController;
+use App\Http\Controllers\Portal\AuditLogController;
+use App\Http\Controllers\Portal\FourMonthlyReportController;
+use App\Http\Controllers\Portal\IdCardRenewalController;
+use App\Http\Controllers\Portal\InstructorController;
+use App\Http\Controllers\Portal\PersonnelController;
+use App\Http\Controllers\Portal\RoleManagementController;
+use App\Http\Controllers\Portal\UnitTransferController;
+use App\Http\Controllers\Portal\WardTransferController;
+use Illuminate\Support\Facades\Route;
+
+Route::view('/', 'pages.home')->name('home');
+Route::view('/about','pages.about')->name('about');
+Route::view('/programs','pages.programs')->name('programs');
+Route::view('/leadership','pages.leadership')->name('leadership');
+Route::view('/teams','pages.teams')->name('teams');
+Route::view('/gallery','pages.gallery')->name('gallery');
+Route::view('/blog','pages.blog')->name('blog');
+Route::view('/impact','pages.impact')->name('impact');
+Route::view('/contact','pages.contact')->name('contact');
+
+Route::get('/verify',[VerifyController::class,'index'])->name('verify');
+Route::post('/verify',[VerifyController::class,'search'])->middleware('throttle:30,1')->name('verify.search');
+
+Route::prefix('portal')->name('portal.')->group(function():void{
+    Route::get('/login',[AuthController::class,'login'])->middleware('guest')->name('login');
+    Route::post('/login',[AuthController::class,'authenticate'])->middleware(['guest','throttle:10,1'])->name('authenticate');
+    Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->name('logout');
+    Route::middleware('auth')->group(function():void{
+        Route::view('/dashboard','portal.dashboard')->name('dashboard');
+        Route::get('/admin/roles',[RoleManagementController::class,'index'])->name('admin.roles')->middleware('role:super_admin');
+        Route::patch('/admin/roles/{user}',[RoleManagementController::class,'update'])->name('admin.roles.update')->middleware('role:super_admin');
+        Route::patch('/admin/roles/{user}/revoke',[RoleManagementController::class,'revokeAdmin'])->name('admin.roles.revoke')->middleware('role:super_admin');
+        Route::get('/personnel/{cadet}',[PersonnelController::class,'show'])->name('personnel.show');
+        Route::post('/personnel/{cadet}/documents',[PersonnelController::class,'uploadDocument'])->name('personnel.documents.upload');
+        Route::get('/personnel/documents/{document}/download',[PersonnelController::class,'downloadDocument'])->name('personnel.documents.download');
+        Route::delete('/personnel/documents/{document}',[PersonnelController::class,'destroyDocument'])->name('personnel.documents.destroy');
+        Route::get('/notifications',[PersonnelController::class,'notifications'])->name('notifications.index');
+        Route::post('/notifications/{notification}/read',[PersonnelController::class,'readNotification'])->name('notifications.read');
+        Route::get('/audit-logs',[AuditLogController::class,'index'])->name('audit-logs.index');
+        Route::get('/reports',[FourMonthlyReportController::class,'index'])->name('reports.index');
+        Route::get('/reports/create',[FourMonthlyReportController::class,'create'])->name('reports.create');
+        Route::post('/reports',[FourMonthlyReportController::class,'store'])->name('reports.store');
+        Route::get('/reports/{report}',[FourMonthlyReportController::class,'show'])->name('reports.show');
+        Route::post('/reports/{report}/submit',[FourMonthlyReportController::class,'submit'])->name('reports.submit');
+        Route::post('/reports/{report}/review',[FourMonthlyReportController::class,'review'])->name('reports.review');
+        Route::get('/unit-transfers',[UnitTransferController::class,'index'])->name('unit-transfers.index');
+        Route::get('/unit-transfers/create',[UnitTransferController::class,'create'])->name('unit-transfers.create');
+        Route::post('/unit-transfers',[UnitTransferController::class,'store'])->name('unit-transfers.store');
+        Route::post('/unit-transfers/{transfer}/release',[UnitTransferController::class,'release'])->name('unit-transfers.release');
+        Route::post('/unit-transfers/{transfer}/accept',[UnitTransferController::class,'accept'])->name('unit-transfers.accept');
+        Route::post('/unit-transfers/{transfer}/verify-payment',[UnitTransferController::class,'verifyPayment'])->name('unit-transfers.verify-payment');
+        Route::get('/id-card-renewals',[IdCardRenewalController::class,'index'])->name('id-card-renewals.index');
+        Route::get('/id-card-renewals/create',[IdCardRenewalController::class,'create'])->name('id-card-renewals.create');
+        Route::post('/id-card-renewals',[IdCardRenewalController::class,'store'])->name('id-card-renewals.store');
+        Route::post('/id-card-renewals/{application}/verify-payment',[IdCardRenewalController::class,'verifyPayment'])->name('id-card-renewals.verify-payment');
+        Route::post('/id-card-renewals/{application}/approve',[IdCardRenewalController::class,'approve'])->name('id-card-renewals.approve');
+        Route::post('/id-card-renewals/{application}/issue',[IdCardRenewalController::class,'issue'])->name('id-card-renewals.issue');
+        Route::get('/ward-transfers',[WardTransferController::class,'index'])->name('ward-transfers.index');
+        Route::get('/ward-transfers/create',[WardTransferController::class,'create'])->name('ward-transfers.create');
+        Route::post('/ward-transfers',[WardTransferController::class,'store'])->name('ward-transfers.store');
+        Route::post('/ward-transfers/{transfer}/{action}',[WardTransferController::class,'action'])->whereIn('action',['release','source-lga','source-state','destination-accept','destination-lga','destination-state','national-approve'])->name('ward-transfers.action');
+        Route::get('/instructors',[InstructorController::class,'index'])->name('instructors.index');
+        Route::get('/instructors/courses',[InstructorController::class,'courses'])->name('instructors.courses');
+        Route::post('/instructors/courses/{course}/enroll',[InstructorController::class,'enroll'])->name('instructors.enroll');
+        Route::get('/instructors/warrants/{warrant}',[InstructorController::class,'showWarrant'])->name('instructors.warrant');
+    });
+});

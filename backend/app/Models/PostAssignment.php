@@ -11,6 +11,6 @@ class PostAssignment extends Model
 {
     protected $fillable = ['cadet_id', 'post_id', 'start_date', 'end_date', 'status', 'reference'];
     protected function casts(): array { return ['start_date' => 'date', 'end_date' => 'date']; }
-    public function cadet(): BelongsTo { return $this->belongsTo(Cadet::class); }
+    public function cadet(): BelongsTo { return $this->belongsTo(Cadet::class, 'cadet_id', 'service_number'); }
     public function post(): BelongsTo { return $this->belongsTo(Post::class); }
 }
