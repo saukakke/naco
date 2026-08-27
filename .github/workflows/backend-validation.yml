@@ -14,9 +14,26 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: naco_test
+          POSTGRES_USER: naco
+          POSTGRES_PASSWORD: naco
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U naco -d naco_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     defaults:
       run:
         working-directory: backend
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,8 +46,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: mbstring, bcmath, pdo_sqlite
+          php-version: '8.3'
+          extensions: mbstring, bcmath, pdo_pgsql
           coverage: none
 
       - name: Validate Composer configuration
@@ -42,20 +59,52 @@ jobs:
       - name: Check PHP syntax
         run: find app bootstrap config database public resources routes tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
-      - name: Prepare application
+      - name: Prepare PostgreSQL application
+        env:
+          APP_ENV: testing
+          APP_DEBUG: true
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: naco_test
+          DB_USERNAME: naco
+          DB_PASSWORD: naco
         run: |
           cp .env.example .env
-          mkdir -p database
-          touch database/database.sqlite
-          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
-          sed -i '/^DB_HOST=/d;/^DB_PORT=/d;/^DB_DATABASE=/d;/^DB_USERNAME=/d;/^DB_PASSWORD=/d' .env
           php artisan key:generate --force
 
-      - name: Validate migrations
-        run: php artisan migrate --force
+      - name: Validate migrations against PostgreSQL
+        env:
+          APP_ENV: testing
+          APP_DEBUG: true
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: naco_test
+          DB_USERNAME: naco
+          DB_PASSWORD: naco
+        run: php artisan migrate:fresh --force
 
       - name: Run backend tests
+        env:
+          APP_ENV: testing
+          APP_DEBUG: true
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: naco_test
+          DB_USERNAME: naco
+          DB_PASSWORD: naco
         run: php artisan test --without-tty
 
       - name: Validate application boot and routes
+        env:
+          APP_ENV: testing
+          APP_DEBUG: true
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: naco_test
+          DB_USERNAME: naco
+          DB_PASSWORD: naco
         run: php artisan about && php artisan route:list --except-vendor
