@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [ "${APP_ENV:-}" != "production" ]; then
+    echo "ERROR: APP_ENV must be production in this deployment."
+    exit 1
+fi
+
+if [ "${APP_DEBUG:-false}" != "false" ]; then
+    echo "ERROR: APP_DEBUG must be false in this deployment."
+    exit 1
+fi
+
 DB_PATH="${DB_DATABASE:-/var/data/database.sqlite}"
 DB_DIR="$(dirname "$DB_PATH")"
 mkdir -p "$DB_DIR"

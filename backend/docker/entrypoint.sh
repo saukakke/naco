@@ -10,6 +10,16 @@ if [ -z "${APP_KEY:-}" ]; then
     exit 1
 fi
 
+if [ "${APP_ENV:-}" != "production" ]; then
+    echo "ERROR: APP_ENV must be production in this deployment."
+    exit 1
+fi
+
+if [ "${APP_DEBUG:-false}" != "false" ]; then
+    echo "ERROR: APP_DEBUG must be false in this deployment."
+    exit 1
+fi
+
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache

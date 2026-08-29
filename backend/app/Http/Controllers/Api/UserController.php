@@ -10,20 +10,56 @@ use App\Models\User;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
     private const ROLES=['super_admin','admin','instructor','unit_commander','cadet','hcs','chairman_self_reliance','state_controller','national'];
-    private function guard(Request $request):void{abort_unless($request->user()->hasGlobalAccess(),403,'Administrator access required.');}
-    public function index(Request $request){$this->guard($request);$q=User::with(['cadet','unit','ward','lga','state'])->select(['id','name','email','role','cadet_id','unit_id','ward_id','lga_id','state_id','created_at']);return response()->json($q->latest()->paginate(20));}
-    public function store(Request $request){$this->guard($request);$data=$this->validatedUserData($request);if(!$request->user()->isSuperAdmin()&&($data['role']??null)==='super_admin')abort(403,'Only the Super Admin can assign the Super Admin role.');$user=User::create($data);return response()->json($user->load(['cadet','unit','ward','lga','state'])->makeHidden(['password','remember_token']),201);}
-    public function show(Request $request,User $user){$this->guard($request);return response()->json($user->load(['cadet','unit','ward','lga','state'])->makeHidden(['password','remember_token']));}
-    public function update(Request $request,User $user){$this->guard($request);abort_if($user->isSuperAdmin()&&!$request->user()->isSuperAdmin(),403,'Super Admin accounts cannot be modified by ordinary administrators.');$data=$this->validatedUserData($request,$user);if(!$request->user()->isSuperAdmin()&&($data['role']??$user->role)==='super_admin')abort(403,'Only the Super Admin can assign the Super Admin role.');$user->update($data);return response()->json($user->fresh()->load(['cadet','unit','ward','lga','state'])->makeHidden(['password','remember_token']));}
-    public function destroy(Request $request,User $user){$this->guard($request);abort_if($request->user()->id===$user->id,422,'You cannot delete your own account.');abort_if($user->isSuperAdmin()&&!$request->user()->isSuperAdmin(),403,'Super Admin accounts cannot be deleted by ordinary administrators.');$user->delete();return response()->noContent();}
+
+    public function index(Request $request)
+    {
+        $this->authorize('manage', $request->user());
+        $q=User::with(['cadet','unit','ward','lga','state'])->select(['id','name','email','role','cadet_id','unit_id','ward_id','lga_id','state_id','created_at']);
+        return response()->json($q->latest()->paginate(20));
+    }
+
+    public function store(Request $request)
+    {
+        $data=$this->validatedUserData($request);
+        $target=new User(['role'=>$data['role']??null]);
+        if ($target->isSuperAdmin()) $this->authorize('manageAdmins', User::class);
+        else $this->authorize('manage', $target);
+        $user=User::create($data);
+        return response()->json($user->load(['cadet','unit','ward','lga','state'])->makeHidden(['password','remember_token']),201);
+    }
+
+    public function show(Request $request,User $user)
+    {
+        $this->authorize('manage',$user);
+        return response()->json($user->load(['cadet','unit','ward','lga','state'])->makeHidden(['password','remember_token']));
+    }
+
+    public function update(Request $request,User $user)
+    {
+        $data=$this->validatedUserData($request,$user);
+        if ($user->isSuperAdmin() || (($data['role']??$user->role)==='super_admin')) $this->authorize('manageAdmins', User::class);
+        else $this->authorize('manage',$user);
+        $user->update($data);
+        return response()->json($user->fresh()->load(['cadet','unit','ward','lga','state'])->makeHidden(['password','remember_token']));
+    }
+
+    public function destroy(Request $request,User $user)
+    {
+        $this->authorize('manage',$user);
+        abort_if($request->user()->id===$user->id,422,'You cannot delete your own account.');
+        $user->delete();
+        return response()->noContent();
+    }
+
     private function validatedUserData(Request $request,?User $existing=null):array
     {
         $create=$existing===null;
-        $rules=['name'=>[$create?'required':'sometimes','string','max:150'],'email'=>[$create?'required':'sometimes','email','max:255',Rule::unique('users','email')->ignore($existing?->id)],'password'=>[$create?'required':'nullable','string','min:8'],'role'=>[$create?'required':'sometimes',Rule::in(self::ROLES)],'cadet_id'=>['sometimes','nullable','exists:cadets,service_number'],'unit_id'=>['sometimes','nullable','exists:units,id'],'ward_id'=>['sometimes','nullable','exists:wards,id'],'lga_id'=>['sometimes','nullable','exists:lgas,id'],'state_id'=>['sometimes','nullable','exists:states,id']];
+        $rules=['name'=>[$create?'required':'sometimes','string','max:150'],'email'=>[$create?'required':'sometimes','email','max:255',Rule::unique('users','email')->ignore($existing?->id)],'password'=>[$create?'required':'nullable','string',Password::min(10)->mixedCase()->numbers()],'role'=>[$create?'required':'sometimes',Rule::in(self::ROLES)],'cadet_id'=>['sometimes','nullable','exists:cadets,service_number'],'unit_id'=>['sometimes','nullable','exists:units,id'],'ward_id'=>['sometimes','nullable','exists:wards,id'],'lga_id'=>['sometimes','nullable','exists:lgas,id'],'state_id'=>['sometimes','nullable','exists:states,id']];
         $data=$request->validate($rules);
         if(array_key_exists('password',$data)&&blank($data['password']))unset($data['password']);
         $role=$data['role']??$existing?->role;
@@ -32,6 +68,7 @@ class UserController extends Controller
         foreach(['cadet_id','unit_id','ward_id','lga_id','state_id'] as $field)if(array_key_exists($field,$data)&&$data[$field]===null)unset($data[$field]);
         return $data;
     }
+
     private function normalizeRoleScope(array &$data,?string $role):void
     {
         if($role==='unit_commander')abort_unless(!empty($data['unit_id']),422,'A Unit Commander must be assigned to a unit.');

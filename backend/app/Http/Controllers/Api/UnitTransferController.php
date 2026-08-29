@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cadet;
 use App\Models\UnitTransfer;
-use App\Services\AuthorizationService;
 use App\Services\UnitTransferService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,10 +39,9 @@ class UnitTransferController extends Controller
         return response()->json($service->verifyPayment($transfer,$data['payment_reference']));
     }
 
-    public function show(Request $request, UnitTransfer $transfer, AuthorizationService $authorization): JsonResponse
+    public function show(Request $request, UnitTransfer $transfer): JsonResponse
     {
-        $transfer->loadMissing('cadet');
-        abort_unless($authorization->canAccessCadet($request->user(),$transfer->cadet),403);
+        $this->authorize('view',$transfer);
         return response()->json($transfer->load(['cadet','fromUnit','toUnit','releasedBy','acceptedBy']));
     }
 }
