@@ -38,7 +38,7 @@ return new class extends Migration
               AND con.conkey @> ARRAY[(
                   SELECT attnum FROM pg_attribute
                   WHERE attrelid = rel.oid AND attname = 'cadet_id'
-              )::smallint[]]
+              )]
         SQL);
 
         foreach ($constraints as $constraint) {
