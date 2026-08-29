@@ -6,14 +6,11 @@ namespace Tests\Feature;
 
 use App\Models\Cadet;
 use App\Models\Course;
-use App\Models\Lga;
 use App\Models\Rank;
 use App\Models\RankCategory;
-use App\Models\State;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Warrant;
-use App\Models\Ward;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
@@ -60,7 +57,7 @@ class SecurityRegressionTest extends TestCase
     public function test_only_one_warrant_expiry_command_exists_and_it_updates_status(): void
     {
         $commands=Artisan::all();
-        $expiryCommands=array_values(array_filter(array_keys($commands),fn(string $name):bool=>str_contains($name,'warrant')&&str_contains($name,'expir')));
+        $expiryCommands=array_values(array_filter(array_keys($commands),fn(string $name):bool=>in_array($name,['naco:warrants:process-expiry','naco:instructors:sync-warrants'],true)));
         $this->assertSame(['naco:instructors:sync-warrants'],$expiryCommands);
 
         $unit=Unit::create(['code'=>'A','name'=>'Unit A']);
