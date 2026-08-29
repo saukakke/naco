@@ -11,7 +11,6 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table): void {
             $table->foreignId('unit_id')->nullable()->after('cadet_id')->constrained('units')->nullOnDelete()->index();
-            $table->foreign('cadet_id')->references('service_number')->on('cadets')->nullOnDelete();
             $table->string('role')->default('cadet')->change();
         });
     }
@@ -19,7 +18,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table): void {
-            $table->dropForeign(['cadet_id']);
             $table->dropForeign(['unit_id']);
             $table->dropColumn('unit_id');
             $table->string('role')->default('admin')->change();
