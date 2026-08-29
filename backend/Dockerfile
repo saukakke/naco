@@ -1,4 +1,4 @@
-FROM php:8.3-cli
+FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git unzip libpq-dev libzip-dev libonig-dev libicu-dev \
@@ -26,6 +26,6 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 COPY docker/entrypoint.sh /usr/local/bin/naco-entrypoint
 RUN chmod +x /usr/local/bin/naco-entrypoint
 
-EXPOSE 8080
+EXPOSE 8000
 
 ENTRYPOINT ["naco-entrypoint"]
