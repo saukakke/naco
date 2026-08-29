@@ -27,25 +27,63 @@ return new class extends Migration {
             });
         }
 
-        Schema::table('users', function (Blueprint $table): void {
-            $table->foreignId('ward_id')->nullable()->after('cadet_id')->constrained('wards')->nullOnDelete();
-            $table->foreignId('lga_id')->nullable()->after('ward_id')->constrained('lgas')->nullOnDelete();
-            $table->foreignId('state_id')->nullable()->after('lga_id')->constrained('states')->nullOnDelete();
-        });
+        foreach ([
+            'ward_id' => ['after' => 'cadet_id', 'table' => 'wards'],
+            'lga_id' => ['after' => 'ward_id', 'table' => 'lgas'],
+            'state_id' => ['after' => 'lga_id', 'table' => 'states'],
+        ] as $column => $config) {
+            if (! Schema::hasColumn('users', $column)) {
+                Schema::table('users', function (Blueprint $table) use ($column, $config): void {
+                    $table->foreignId($column)->nullable()->after($config['after']);
+                });
+            }
+
+            $foreignKeyExists = collect(Schema::getForeignKeys('users'))
+                ->contains(fn (array $foreignKey): bool => in_array($column, $foreignKey['columns'] ?? [], true));
+
+            if (! $foreignKeyExists) {
+                Schema::table('users', function (Blueprint $table) use ($column, $config): void {
+                    $table->foreign($column)
+                        ->references('id')
+                        ->on($config['table'])
+                        ->nullOnDelete();
+                });
+            }
+        }
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table): void {
-            $table->dropForeign(['state_id']);
-            $table->dropForeign(['lga_id']);
-            $table->dropForeign(['ward_id']);
-            $table->dropColumn(['state_id', 'lga_id', 'ward_id']);
-        });
+        foreach (['state_id', 'lga_id', 'ward_id'] as $column) {
+            if (Schema::hasColumn('users', $column)) {
+                $foreignKeyExists = collect(Schema::getForeignKeys('users'))
+                    ->contains(fn (array $foreignKey): bool => in_array($column, $foreignKey['columns'] ?? [], true));
 
-        Schema::table('cadets', function (Blueprint $table): void {
-            $table->dropForeign('cadets_ward_id_foreign');
-            $table->dropColumn('ward_id');
-        });
+                if ($foreignKeyExists) {
+                    Schema::table('users', function (Blueprint $table) use ($column): void {
+                        $table->dropForeign([$column]);
+                    });
+                }
+
+                Schema::table('users', function (Blueprint $table) use ($column): void {
+                    $table->dropColumn($column);
+                });
+            }
+        }
+
+        if (Schema::hasColumn('cadets', 'ward_id')) {
+            $foreignKeyExists = collect(Schema::getForeignKeys('cadets'))
+                ->contains(fn (array $foreignKey): bool => in_array('ward_id', $foreignKey['columns'] ?? [], true));
+
+            if ($foreignKeyExists) {
+                Schema::table('cadets', function (Blueprint $table): void {
+                    $table->dropForeign('cadets_ward_id_foreign');
+                });
+            }
+
+            Schema::table('cadets', function (Blueprint $table): void {
+                $table->dropColumn('ward_id');
+            });
+        }
     }
 };
