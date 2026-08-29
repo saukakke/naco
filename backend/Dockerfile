@@ -26,6 +26,6 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 COPY docker/entrypoint.sh /usr/local/bin/naco-entrypoint
 RUN chmod +x /usr/local/bin/naco-entrypoint
 
-EXPOSE 8080
+EXPOSE $PORT
 
 ENTRYPOINT ["naco-entrypoint"]
