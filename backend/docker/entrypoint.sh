@@ -3,7 +3,8 @@ set -eu
 
 cd /var/www/html
 
-PORT="${PORT:-8080}"
+# Use Railway's PORT when provided; otherwise listen on 10000.
+PORT="${PORT:-10000}"
 
 if [ -z "${APP_KEY:-}" ]; then
     echo "ERROR: APP_KEY is not configured."
