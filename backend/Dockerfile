@@ -9,11 +9,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy the Laravel backend manifest first so Docker can cache dependency resolution.
 COPY composer.json ./
-
-# composer.lock is intentionally not required in the repository. Generate it during
-# the image build so Railway can deploy from composer.json alone.
 RUN composer update --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
 
 COPY . .
@@ -26,6 +22,8 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 COPY docker/entrypoint.sh /usr/local/bin/naco-entrypoint
 RUN chmod +x /usr/local/bin/naco-entrypoint
 
-EXPOSE $PORT
+# Railway sets PORT at runtime. Default to 10000 for local/container execution.
+ENV PORT=10000
+EXPOSE 10000
 
 ENTRYPOINT ["naco-entrypoint"]
