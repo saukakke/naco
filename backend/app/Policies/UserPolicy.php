@@ -15,14 +15,18 @@ class UserPolicy
 
     public function manage(User $actor, User $target): bool
     {
-        return $actor->isSuperAdmin() || ($actor->isAdmin() && !$target->isSuperAdmin());
+        if ($actor->isSuperAdmin()) return true;
+        return $actor->isAdmin() && !$target->isSuperAdmin();
     }
 
     public function view(User $actor, User $target): bool
     {
-        if ($actor->isSuperAdmin() || $actor->isAdmin()) return true;
+        if ($actor->hasGlobalAccess() || $actor->isNational()) return true;
         if ($actor->id === $target->id) return true;
-        if ($actor->isInstructor()) return $actor->cadet_id !== null && $target->cadet?->id === $actor->cadet_id;
+        if ($actor->isInstructor()) {
+            return $actor->cadet_id !== null && $target->cadet_id === $actor->cadet_id;
+        }
+        if ($actor->isCadet()) return $actor->cadet_id !== null && $target->cadet_id === $actor->cadet_id;
         return false;
     }
 }
